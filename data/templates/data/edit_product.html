@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    {% comment %} <link rel="stylesheet" href="{% static 'styles.css' %}"> {% endcomment %}
+</head>
+<body>
+    <h1>Edit Product</h1>
+
+    <form action="{% url 'edit_product' product.id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" value="{{ product.name }}" required>
+        <label for="productDescription">Product Description:</label>
+        <textarea id="productDescription" name="productDescription" required>{{ product.description }}</textarea>
+        <label for="productPrice">Product Price:</label>
+        <input type="number" id="productPrice" name="productPrice" step="0.01" value="{{ product.price }}" required>
+        <label for="productQuantity">Product Quantity:</label>
+        <input type="number" id="productQuantity" name="productQuantity" value="{{ product.quantity }}" required>
+        <label for="productImage">Product Image:</label>
+        <input type="file" id="productImage" name="productImage">
+        <label for="productImage">Product Image:</label>
+        <input type="file" id="productImage" name="productImage">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" width="100">
+        {% endif %}
+        <button type="submit">Update Product</button>
+    </form>
+</body>
+</html>
