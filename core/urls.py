@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 # Define BASE_DIR if it's not already defined (for example, in settings.py)
 BASE_DIR = getattr(settings, 'BASE_DIR', None)
+app_name = 'core'
 
 urlpatterns = [
     path('products/', views.product_list, name='product_list'),
@@ -13,6 +14,8 @@ urlpatterns = [
     path('clients/', views.client_list, name='client_list'),
     path('orders/', views.order_list, name='order_list'),
     path('payments/', views.payment_list, name='payment_list'),
+    path('add_payment/', views.add_payment, name='add_payment'),
+    path('order/<int:order_id>/', views.order_details, name='order_details'),
 ]
 
 # # Додайте статичні та медіа маршрути, якщо MEDIA_ROOT визначено

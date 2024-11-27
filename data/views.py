@@ -2,22 +2,50 @@ from email.mime import image
 from django.shortcuts import render, redirect, get_object_or_404
 from core.models import Product
 
+
 def admin_panel(request):
     # Отримання усіх продуктів з БД
     products = Product.objects.all()
     return render(request, 'data/admin_panel.html', {'products': products})
 
+
 def add_product(request):
     if request.method == 'POST':
-        # Отримання даних з POST-запиту та збереження в БД
+        # Отримання даних з POST-запиту
         name = request.POST.get('productName')
         description = request.POST.get('productDescription')
         price = request.POST.get('productPrice')
         quantity = request.POST.get('productQuantity')
-        image = request.FILES.get('productImage')
-        Product.objects.create(name=name, description=description, price=price, quantity=quantity, image=image)
-        return redirect('admin_panel')
+        product_image = request.FILES.get('productImage')
+
+        # Перевірка введених даних
+        if not name or not description or not price or not quantity:
+            return render(
+                request,
+                'data/add_product.html',
+                {'error': 'Усі поля обов’язкові для заповнення!'},
+            )
+
+        # Створення нового продукту
+        try:
+            Product.objects.create(
+                name=name,
+                description=description,
+                price=price,
+                quantity=quantity,
+                image=product_image,
+            )
+            return redirect('data:admin_panel')  # Замініть на коректний шлях
+        except Exception as e:
+            return render(
+                request,
+                'data/add_product.html',
+                {'error': f'Помилка при збереженні продукту: {str(e)}'},
+            )
+
+    # GET-запит: відображення форми
     return render(request, 'data/add_product.html')
+
 
 def edit_product(request, product_id):
     # Отримання продукту за його ID
@@ -34,12 +62,13 @@ def edit_product(request, product_id):
         return redirect('admin_panel')
     return render(request, 'data/edit_product.html', {'product': product})
 
+
 def delete_product(request, product_id):
     # Отримання продукту за його ID та його видалення з БД
     product = get_object_or_404(Product, pk=product_id)
     product.delete()
     # Перенаправлення на сторінку адмін панелі
-    return redirect('admin_panel')
+    return redirect('data/admin_panel.html')
 
 
 # from django.shortcuts import render, redirect, get_object_or_404

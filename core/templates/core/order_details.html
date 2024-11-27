@@ -1,0 +1,62 @@
+{% extends "myproject1/base.html" %}
+{% load static %}
+•{% load custom_filters %}
+
+{% block title %}Order Details{% endblock %}
+{% block link %}
+                        
+
+<a class="nav-link" href="{% url 'data:admin_panel' %}">Admin Panel</a>
+<a class="nav-link" href="{% url 'core:add_payment' %}">add_payment</a>
+<a class="nav-link" href="{% url 'core:payment_list' %}">payment_list</a>
+
+{% endblock  %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Order Details</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Order ID: {{ order.id }}</h5>
+            <p class="card-text"><strong>Client Name:</strong> {{ order.client.name }}</p>
+            <p class="card-text"><strong>Client Email:</strong> {{ order.client.email }}</p>
+            <p class="card-text"><strong>Product:</strong> {{ order.product.name }}</p>
+            <p class="card-text"><strong>Description:</strong> {{ order.product.description }}</p>
+            <p class="card-text"><strong>Quantity:</strong> {{ order.quantity }}</p>
+            <p class="card-text"><strong>Price per Item:</strong> ${{ order.product.price }}</p>
+            <p class="card-text"><strong>Total:</strong> ${{ order.quantity|floatformat:2|mul:order.product.price }}</p>
+            <p class="card-text"><strong>Status:</strong>
+                {% if order.status == 'completed' %}
+                    <span class="badge bg-success">Completed</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+            </p>
+            <p class="card-text"><strong>Order Date:</strong> {{ order.created_at }}</p>
+        </div>
+    </div>
+
+    {% if payment %}
+    <h3 class="mt-4">Payment Details</h3>
+    <div class="card">
+        <div class="card-body">
+            <p class="card-text"><strong>Amount:</strong> ${{ payment.amount }}</p>
+            <p class="card-text"><strong>Method:</strong> {{ payment.method }}</p>
+            <p class="card-text"><strong>Transaction ID:</strong> {{ payment.transaction_id }}</p>
+            <p class="card-text"><strong>Status:</strong>
+                {% if payment.status == 'completed' %}
+                    <span class="badge bg-success">Completed</span>
+                {% elif payment.status == 'pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% else %}
+                    <span class="badge bg-danger">Failed</span>
+                {% endif %}
+            </p>
+            <p class="card-text"><strong>Payment Date:</strong> {{ payment.payment_date }}</p>
+        </div>
+    </div>
+    {% else %}
+    <h3 class="mt-4">No Payment Found</h3>
+    {% endif %}
+</div>
+{% endblock %}

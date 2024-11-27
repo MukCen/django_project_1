@@ -1,11 +1,18 @@
-{% extends "data/base.html" %}
+{% extends "myproject1\base.html" %}
+{% load static %}
 
 {% block title %}Edit Product{% endblock %}
+{% block link %}
+                        
+<a class="nav-link" href="{% url 'data:add_product' %}">Add Product</a>
+<a class="nav-link" href="{% url 'data:admin_panel' %}">Admin Panel</a>
+
+{% endblock  %}
 
 {% block content %}
     <h2>Edit Product</h2>
 
-    <form action="{% url 'edit_product' product.id %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'data:edit_product' product.id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="productName">Product Name:</label>
         <input type="text" id="productName" name="productName" value="{{ product.name }}" required>

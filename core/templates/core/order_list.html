@@ -1,0 +1,48 @@
+{% extends "myproject1/base.html" %}
+{% load static %}
+
+{% block title %}Order List{% endblock %}
+{% block link %}
+                        
+
+<a class="nav-link" href="{% url 'data:admin_panel' %}">Admin Panel</a>
+<a class="nav-link" href="{% url 'core:add_payment' %}">add_payment</a>
+<a class="nav-link" href="{% url 'core:payment_list' %}">payment_list</a>
+
+{% endblock  %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Order List</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Client</th>
+                <th>Quantity</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.product.name }}</td>
+                <td>{{ order.client.name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>
+                    {% if order.status == 'completed' %}
+                    <span class="badge bg-success">Completed</span>
+                    {% elif order.status == 'pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                    {% else %}
+                    <span class="badge bg-secondary">{{ order.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "myproject1/base.html" %}
+{% load static %}
+{% block title %}Payment Form{% endblock %}
+{% block link %}
+                        
+
+<a class="nav-link" href="{% url 'data:admin_panel' %}">Admin Panel</a>
+<a class="nav-link" href="{% url 'core:add_payment' %}">add_payment</a>
+<a class="nav-link" href="{% url 'core:payment_list' %}">payment_list</a>
+
+{% endblock  %}
+{% block content %}
+
+    <h2>Payment Form</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Payment</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,23 @@
+[MASTER]
+# Папки для ігнорування
+ignore=migrations,static
+
+# Пропустити файли з розширенням .html
+init-hook='import sys; sys.setdlopenflags(0x100 | 0x200)'
+
+# Налаштування для Django
+load-plugins=pylint_django
+
+[MESSAGES CONTROL]
+# Виключення деяких непотрібних повідомлень
+disable=missing-docstring, too-few-public-methods, no-self-use, invalid-name, too-many-instance-attributes, too-many-locals, too-many-arguments
+
+[REPORTS]
+# Вимкнення звітів про результати лінтингу
+output-format=text
+reports=no
+
+[LOGGING]
+# Встановлення рівня логу
+logging-modules=logging
+ignore = ipython_config.py
