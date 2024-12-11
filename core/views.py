@@ -1,17 +1,20 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import JsonResponse, HttpResponse
+from django.http import Http404, JsonResponse, HttpResponse
 
 from core.forms import PaymentForm
-from .models import Product, Client, Order, Payment
+from .models import Products, Client, Order, Payment
 import openpyxl
 from django.utils.encoding import smart_str
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
+from django.views.generic import DetailView, ListView
+
+from core.utils import q_search
 
 
 def product_list(request):
-    products = Product.objects.all()
+    products = Products.objects.all()
     return render(request, 'core/product_list.html', {'products': products})
 
 
@@ -26,7 +29,7 @@ def export_to_excel(request):
     ws.append(columns)
 
     # Fetch data from the database and append it to the worksheet
-    products = Product.objects.all()
+    products = Products.objects.all()
     for product in products:
         ws.append([product.name, product.description, product.price, product.quantity])
 
@@ -52,7 +55,7 @@ def import_from_excel(request):
 
         for row in ws.iter_rows(min_row=2, values_only=True):  # Skip the header row
             name, description, price, quantity = row
-            Product.objects.create(
+            Products.objects.create(
                 name=name, description=description, price=price, quantity=quantity
             )
 
@@ -104,6 +107,64 @@ def order_details(request, order_id):
         'payment': payment,
     }
     return render(request, 'core/order_details.html', context)
+
+
+class CatalogView(ListView):
+    model = Products
+    # queryset = Products.objects.all().order_by("-id")
+    template_name = "goods/catalog.html"
+    context_object_name = "goods"
+    paginate_by = 3
+    allow_empty = False
+    # чтоб удобно передать в методы
+    slug_url_kwarg = "category_slug"
+
+    def get_queryset(self):
+        category_slug = self.kwargs.get(self.slug_url_kwarg)
+        on_sale = self.request.GET.get("on_sale")
+        order_by = self.request.GET.get("order_by")
+        query = self.request.GET.get("q")
+
+        if category_slug == "all":
+            goods = super().get_queryset()
+        elif query:
+            goods = q_search(query)
+        else:
+            goods = super().get_queryset().filter(category__slug=category_slug)
+            if not goods.exists():
+                raise Http404()
+
+        if on_sale:
+            goods = goods.filter(discount__gt=0)
+
+        if order_by and order_by != "default":
+            goods = goods.order_by(order_by)
+
+        return goods
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Home - Каталог"
+        context["slug_url"] = self.kwargs.get(self.slug_url_kwarg)
+        return context
+
+
+class ProductView(DetailView):
+
+    # model = Products
+    # slug_field = "slug"
+    template_name = "core/product.html"
+    slug_url_kwarg = "product_slug"
+    context_object_name = "product"
+
+    def get_object(self, queryset=None):
+        product = Products.objects.get(slug=self.kwargs.get(self.slug_url_kwarg))
+        return product
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = self.object.name  # type: ignore
+        return context
 
 
 # def payment_list(request):

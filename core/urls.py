@@ -16,6 +16,7 @@ urlpatterns = [
     path('payments/', views.payment_list, name='payment_list'),
     path('add_payment/', views.add_payment, name='add_payment'),
     path('order/<int:order_id>/', views.order_details, name='order_details'),
+    path("product/<slug:product_slug>/", views.ProductView.as_view(), name="product"),
 ]
 
 # # Додайте статичні та медіа маршрути, якщо MEDIA_ROOT визначено

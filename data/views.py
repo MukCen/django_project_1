@@ -1,11 +1,11 @@
 from email.mime import image
 from django.shortcuts import render, redirect, get_object_or_404
-from core.models import Product
+from core.models import Products
 
 
 def admin_panel(request):
     # Отримання усіх продуктів з БД
-    products = Product.objects.all()
+    products = Products.objects.all()
     return render(request, 'data/admin_panel.html', {'products': products})
 
 
@@ -28,7 +28,7 @@ def add_product(request):
 
         # Створення нового продукту
         try:
-            Product.objects.create(
+            Products.objects.create(
                 name=name,
                 description=description,
                 price=price,
@@ -49,7 +49,7 @@ def add_product(request):
 
 def edit_product(request, product_id):
     # Отримання продукту за його ID
-    product = get_object_or_404(Product, pk=product_id)
+    product = get_object_or_404(Products, pk=product_id)
     if request.method == 'POST':
         product.name = request.POST.get('productName')
         product.description = request.POST.get('productDescription')
@@ -65,18 +65,18 @@ def edit_product(request, product_id):
 
 def delete_product(request, product_id):
     # Отримання продукту за його ID та його видалення з БД
-    product = get_object_or_404(Product, pk=product_id)
+    product = get_object_or_404(Products, pk=product_id)
     product.delete()
     # Перенаправлення на сторінку адмін панелі
     return redirect('data/admin_panel.html')
 
 
 # from django.shortcuts import render, redirect, get_object_or_404
-# from core.models import Product
+# from core.models import Products
 
 # def admin_panel(request):
 #     # Отримання усіх продуктів з БД
-#     products = Product.objects.all()
+#     products = Products.objects.all()
 #     return render(request, 'data/admin_panel.html', {'products': products})
 
 # def add_product(request):
@@ -84,7 +84,7 @@ def delete_product(request, product_id):
 #         # Отримання даних з POST-запиту та збереження в БД
 #         name = request.POST.get('productName')
 #         description = request.POST.get('productDescription')
-#         Product.objects.create(name=name, description=description)
+#         Products.objects.create(name=name, description=description)
 #         # Перенаправлення на сторінку адмін панелі
 #         return redirect('/admin_panel')
 #     else:
@@ -92,7 +92,7 @@ def delete_product(request, product_id):
 
 # def edit_product(request, product_id):
 #     # Отримання продукту за його ID
-#     product = get_object_or_404(Product, pk=product_id)
+#     product = get_object_or_404(Products, pk=product_id)
 #     if request.method == 'POST':
 #         # Отримання даних з POST-запиту та оновлення продукту в БД
 #         product.name = request.POST.get('productName')
@@ -105,7 +105,7 @@ def delete_product(request, product_id):
 
 # def delete_product(request, product_id):
 #     # Отримання продукту за його ID та його видалення з БД
-#     product = get_object_or_404(Product, pk=product_id)
+#     product = get_object_or_404(Products, pk=product_id)
 #     product.delete()
 #     # Перенаправлення на сторінку адмін панелі
 #     return redirect('/admin_panel')

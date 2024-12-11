@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Product, Client, Order, Payment, User
+from .models import Categories, Client, Products, Order, Payment, User
 
-admin.site.register(Product)
+
 admin.site.register(Client)
 admin.site.register(Order)
 admin.site.register(User)
@@ -14,3 +14,31 @@ class PaymentAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
+
+
+@admin.register(Categories)
+class CategoriesAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
+    list_display = [
+        "name",
+    ]
+
+
+@admin.register(Products)
+class ProductsAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
+    list_display = ["name", "quantity", "price", "discount"]
+    list_editable = [
+        "discount",
+    ]
+    search_fields = ["name", "description"]
+    list_filter = ["discount", "quantity", "category"]
+    fields = [
+        "name",
+        "category",
+        "slug",
+        "description",
+        "image",
+        ("price", "discount"),
+        "quantity",
+    ]
